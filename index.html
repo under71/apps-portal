@@ -198,6 +198,33 @@
   .plat span.hot{color:#D3A45E;border-color:#D3A45E}
   .appcard .nums{margin:-6px 0 16px}
   .nums b small{font-size:12px;font-weight:500;color:var(--t2);margin-left:2px;letter-spacing:0}
+
+  /* ── screenshot gallery ── */
+  .gallery{margin:0 -26px 18px;position:relative;overflow:hidden}
+  .gallery-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;gap:0}
+  .gallery-track::-webkit-scrollbar{display:none}
+  .gallery-track .slide{flex:0 0 100%;scroll-snap-align:start;position:relative;cursor:pointer}
+  .gallery-track .slide img{width:100%;display:block;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+  .gallery-track .slide .cap{position:absolute;bottom:0;left:0;right:0;padding:8px 16px;
+    background:linear-gradient(transparent,rgba(0,0,0,.72));font-size:12px;color:#fff;font-weight:500}
+  .gallery-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 2px}
+  .gallery-dots .dot{width:7px;height:7px;border-radius:50%;background:var(--hair2);border:none;cursor:pointer;padding:0;transition:background .2s}
+  .gallery-dots .dot.on{background:var(--t1)}
+  .gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;
+    background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;z-index:2;transition:opacity .2s;opacity:.7}
+  .gallery-nav:hover{opacity:1}
+  .gallery-nav.prev{left:8px}
+  .gallery-nav.next{right:8px}
+  @media(max-width:720px){.gallery-nav{display:none}}
+  /* lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:none;align-items:center;justify-content:center;cursor:zoom-out}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:94vw;max-height:92vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+  .lightbox .lb-cap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:#fff;font-size:14px;font-weight:500;
+    background:rgba(0,0,0,.6);padding:6px 18px;border-radius:8px}
+  .appcard:has(.gallery){grid-column:1/-1}
   /* ── press ── */
   .press{margin-top:22px;border:1px solid var(--hair);border-radius:12px;overflow:hidden}
   .press .ph{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--wash);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
@@ -394,10 +421,21 @@
     products: [
       {
         name:"로뎀이지스", sub:"Aegis · AI 취약점 진단", icon:"assets/aegis.svg", accent:"#00D4AA", id:"aegis",
-        platforms:["주통기 72항목","ISMS-P","GS인증 신청중","저작권 등록"],
+        platforms:["주통기 72항목","ISMS-P","GS인증 시험신청","저작권 등록","특허 3건 출원"],
         nums:[["329","","파일"],["6,954","","Python LOC"],["72","","진단 항목"]],
         tag:"취약점 진단부터 위험평가까지, AI가 자동으로 수행합니다",
         desc:"KISA 주요정보통신기반시설 기술적 취약점 진단 72항목(Unix)과 ISMS-P 기준을 자동 수행하는 AI 진단 도구. Planner-Inspector 이중 그래프 아키텍처로 수집과 판정을 분리하고, YAML 기반 판정 규칙으로 일관된 결과를 보장합니다. 서버·DBMS·네트워크·웹·SAST·DAST 전 영역 원스톱 진단. 해시 체인 감사 로그로 위변조를 탐지합니다.",
+        gallery:[
+          {src:"assets/aegis/cap_01_dashboard.png", cap:"대시보드 — 전체 프로젝트 진단 현황"},
+          {src:"assets/aegis/cap_02_assets.png", cap:"자산 관리 — SSH 접속 정보·호스트 키 등록"},
+          {src:"assets/aegis/cap_03_diagnose.png", cap:"진단 실행 — 대상 선택·점검 범위·실시간 진행"},
+          {src:"assets/aegis/cap_04_results.png", cap:"진단 결과 — 양호/취약/N·A 판정 목록"},
+          {src:"assets/aegis/cap_05_review.png", cap:"검토 — AI 판정 수기 재확인·컨설턴트 검토"},
+          {src:"assets/aegis/cap_06_reports.png", cap:"보고서 — 자동 생성·다운로드"},
+          {src:"assets/aegis/cap_07_risk.png", cap:"위험평가 — 자산·위협·취약점 기반 위험도 산출"},
+          {src:"assets/aegis/cap_08_auditlog.png", cap:"감사 로그 — SHA-256 해시 체인 무결성"},
+          {src:"assets/aegis/cap_09_retest.png", cap:"이행점검 비교 — 조치 전후 Delta 비교"},
+        ],
         links:[
           {t:"제품 문의", u:"mailto:paeyoung.park@gmail.com?subject=%5BAegis%20%EB%AC%B8%EC%9D%98%5D", primary:true},
           {t:"로뎀시스템", u:"https://rothemsystem.com"},
@@ -591,6 +629,7 @@
        ${a.motto?`<div class="motto">${esc(a.motto)}<span class="ref">${esc(a.ref||'')}</span></div>`:''}
        <div class="desc">${esc(a.desc)}</div>
        ${a.nums?`<div class="nums">${a.nums.map(n=>`<div><b>${esc(n[0])}<small>${esc(n[1])}</small></b><span>${esc(n[2])}</span></div>`).join('')}</div>`:''}
+       ${a.gallery?`<div class="gallery" data-gid="${esc(a.id||'')}"><button class="gallery-nav prev" aria-label="이전">‹</button><button class="gallery-nav next" aria-label="다음">›</button><div class="gallery-track">${a.gallery.map((g,i)=>`<div class="slide" data-idx="${i}"><img src="${esc(g.src)}" alt="${esc(g.cap)}" loading="lazy"><div class="cap">${esc(g.cap)}</div></div>`).join('')}</div><div class="gallery-dots">${a.gallery.map((_,i)=>`<button class="dot${i===0?' on':''}" data-idx="${i}"></button>`).join('')}</div></div>`:''}
        <div class="links">${a.links.map(l =>
          `<span class="lk ${l.primary?'primary':''}"${l.primary?'':' data-u="'+esc(l.u)+'"'}>${esc(l.t)}${l.primary?'<span class="arw">→</span>':''}</span>`
        ).join('')}</div>`;
@@ -603,6 +642,37 @@
   document.querySelectorAll('.grid[data-group]').forEach(grid=>{
     (GROUPS[grid.dataset.group]||[]).forEach(a=>grid.appendChild(render(a)));
   });
+
+  /* ── gallery carousel + lightbox ── */
+  (function(){
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.innerHTML = '<img><div class="lb-cap"></div>';
+    document.body.appendChild(lb);
+    lb.addEventListener('click', ()=> lb.classList.remove('open'));
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') lb.classList.remove('open'); });
+
+    document.querySelectorAll('.gallery').forEach(g=>{
+      const track = g.querySelector('.gallery-track');
+      const dots = g.querySelectorAll('.dot');
+      const slides = g.querySelectorAll('.slide');
+      const prev = g.querySelector('.prev');
+      const next = g.querySelector('.next');
+      let cur = 0;
+      function go(i){ cur = Math.max(0, Math.min(i, slides.length-1)); slides[cur].scrollIntoView({behavior:'smooth',block:'nearest',inline:'start'}); dots.forEach((d,j)=>d.classList.toggle('on',j===cur)); }
+      prev.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); go(cur-1); });
+      next.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); go(cur+1); });
+      dots.forEach(d=> d.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); go(+d.dataset.idx); }));
+      let observer = new IntersectionObserver(entries=>{ entries.forEach(en=>{ if(en.isIntersecting){ const i=+en.target.dataset.idx; cur=i; dots.forEach((d,j)=>d.classList.toggle('on',j===i)); } }); },{root:track, threshold:.6});
+      slides.forEach(s=> observer.observe(s));
+      slides.forEach(s=> s.addEventListener('click', e=>{
+        e.preventDefault(); e.stopPropagation();
+        lb.querySelector('img').src = s.querySelector('img').src;
+        lb.querySelector('.lb-cap').textContent = s.querySelector('.cap').textContent;
+        lb.classList.add('open');
+      }));
+    });
+  })();
 </script>
 </body>
 </html>
